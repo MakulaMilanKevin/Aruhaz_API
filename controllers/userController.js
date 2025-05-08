@@ -12,11 +12,11 @@ const register = async (req, res) => {
     const {email, username, password} = req.body
 
     if(!email || !username || !password){
-        return res.json({message: "Hiányos adatok!"});
+        return res.status(401).json({message: "Hiányos adatok!"});
     }
 
     if (!isValidEmail(email))
-        return res.json({message: "Nem helyes email cím!"});
+        return res.status(401).json({message: "Nem helyes email cím!"});
 
     const user = await prisma.user.findFirst({
         where: {
@@ -25,7 +25,7 @@ const register = async (req, res) => {
     });
 
     if(user){
-        return res.json({message: "Email-cím már használatban!"});
+        return res.status(401).json({message: "Email-cím már használatban!"});
     }
 
     const hash = await argon2.hash(password);
@@ -47,7 +47,7 @@ const register = async (req, res) => {
 const login = async (req, res) => {
     const {email, password} = req.body
     if(!email || !password){
-        return res.json({
+        return res.status(401).json({
             message: "Hiányzó adatok!"
         });
     }
@@ -60,7 +60,7 @@ const login = async (req, res) => {
 
 
     if(!user){
-        return res.json({
+        return res.status(401).status(401).json({
             message: "Nem létező fiók!"
         });
     }
@@ -76,7 +76,7 @@ const login = async (req, res) => {
             token
         })
     } else {
-        return res.json({
+        return res.status(401).json({
             message: "Helytelen jelszó!"
         });
     }
